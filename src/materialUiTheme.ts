@@ -12,4 +12,7 @@ export default createTheme({
     shape: {
         borderRadius: 24,
     },
+    typography: {
+        fontFamily: 'Nunito, sans-serif',
+    },
 });

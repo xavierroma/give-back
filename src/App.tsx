@@ -1,13 +1,24 @@
-import { Fab, ThemeProvider } from '@mui/material';
+import { ThemeProvider } from '@mui/material';
 import theme from './materialUiTheme';
+import GiveBack from './components/GiveBack';
 
 const App = () => (
     <ThemeProvider theme={theme}>
-        <div className="App">
-            <Fab variant="extended" size="medium" color="primary" aria-label="add">
-                Give back
-            </Fab>
-        </div>
+        <GiveBack
+            config={{
+                name: 'X',
+                wallets: [
+                    { chain: 'eth', address: 'xroma.eth' },
+                    { chain: 'cosmos', address: '' },
+                    { chain: 'btc', address: '' },
+                ],
+                suggestedDonation: {
+                    amount: 5,
+                    tokenSymbol: 'DAI',
+                    tokenAddress: '',
+                },
+            }}
+        />
     </ThemeProvider>
 );
 
