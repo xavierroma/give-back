@@ -1,37 +1,36 @@
 import { ChangeEvent, FC, useCallback, useState } from 'react';
+import { useNetwork } from 'wagmi';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
-import ToggleButton from '@mui/material/ToggleButton';
 import TextField from '@mui/material/TextField';
-import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import { SxProps, Theme } from '@mui/material';
 
-import { GiveBackProps, SupportedWallets } from './GiveBack';
+import { GiveBackProps } from './GiveBack';
 import PoweredBy from './PoweredBy';
+import PayButton from './PayButton';
+import ConnectWallet from './ConnectWallet';
+import { DAI } from './dai';
 
 const GiveModal: FC<GiveBackProps & { open: boolean; closeCallback: () => void; sx?: SxProps<Theme> }> = (props) => {
     const {
-        config: { suggestedDonation, wallets, name },
+        config: { suggestedDonation, name },
         open,
         closeCallback,
         sx = {},
     } = props;
     const [amount, setAmount] = useState(suggestedDonation.amount);
-
-    const [selectedChain, setSelectedChain] = useState<SupportedWallets['chain']>('eth');
-
+    const { chain: selectedChain } = useNetwork();
     const handleChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
         const value = Number(e.target.value);
         if (!Number.isNaN(value)) {
             setAmount(value);
         }
     }, []);
-
+    const token = DAI.find((v) => v.chainId === selectedChain?.id);
     return (
         <Paper
             elevation={15}
@@ -75,47 +74,17 @@ const GiveModal: FC<GiveBackProps & { open: boolean; closeCallback: () => void; 
                     <Typography id="modal-modal-title" variant="h6" component="h2">
                         Donate to {name}
                     </Typography>
+                    <ConnectWallet sx={{ alignSelf: 'flex-end' }} />
                     <TextField
                         id="standard-adornment-amount"
                         value={amount}
                         InputProps={{
-                            startAdornment: (
-                                <InputAdornment position="start">{suggestedDonation.tokenSymbol}</InputAdornment>
-                            ),
+                            startAdornment: <InputAdornment position="start">{token?.symbol}</InputAdornment>,
                         }}
                         onChange={handleChange}
                     />
                     <TextField variant="outlined" multiline rows={3} placeholder="Your message" />
-                    <ToggleButtonGroup
-                        sx={{
-                            mt: 2,
-                            alignSelf: 'center',
-                        }}
-                        color="primary"
-                        value={selectedChain}
-                        onChange={(e, newValue: SupportedWallets['chain']) => setSelectedChain(newValue)}
-                        exclusive
-                        aria-label="Platform"
-                    >
-                        {wallets.map((w) => (
-                            <ToggleButton value={w.chain}>{w.chain}</ToggleButton>
-                        ))}
-                    </ToggleButtonGroup>
-                    <Button
-                        sx={{
-                            alignSelf: 'center',
-                            width: 'fit-content',
-                            mt: 2,
-                        }}
-                        disableElevation
-                        variant="outlined"
-                    >
-                        Donate&nbsp;
-                        <b>
-                            {' '}
-                            {amount} {suggestedDonation.tokenSymbol}
-                        </b>
-                    </Button>
+                    {token && <PayButton amount={amount} message="Hey there Im using give back" token={token} />}
                 </Box>
             </Box>
             <PoweredBy />

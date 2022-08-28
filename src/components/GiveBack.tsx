@@ -2,23 +2,17 @@ import { FC, useState } from 'react';
 import Box from '@mui/material/Box';
 import GiveButton from './GiveButton';
 import GiveModal from './GiveModal';
-
-export type SupportedWallets = {
-    address: string;
-    chain: 'eth' | 'cosmos' | 'btc';
-};
+import { ERC20Token } from './interfaces/ERC20Token';
 
 type Donation = {
     amount: number;
-    tokenAddress: string;
-    tokenSymbol: string;
+    token: ERC20Token;
 };
 
 export interface GiveBackProps {
     config: {
         suggestedDonation: Donation;
         name: string;
-        wallets: SupportedWallets[];
     };
 }
 
@@ -29,7 +23,7 @@ const GiveBack: FC<GiveBackProps> = ({ config }) => {
     };
 
     return (
-        <Box sx={{ position: 'absolute', top: '50%', left: '50%' }}>
+        <Box sx={{ position: 'absolute', top: '10%', left: '10%' }}>
             <GiveButton onClick={handleOpen} />
             <GiveModal
                 sx={{
